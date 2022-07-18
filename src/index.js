@@ -1,7 +1,9 @@
 require('dotenv').config()
 const express = require('express')
+const app = express()
+const users = require('./routes/users.route')
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
+const connectDB = require('.db/connectDB')
 const cors = require('cors')
 const logger = require('./api/utils/logger')
 const { env: { PORT }, argv: [, , port = PORT || 8080] } = process
@@ -10,10 +12,8 @@ logger.info('starting server');
 
 (async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1/users-api')
+        await connectDB(process.env.MONGO_URI || 'mongodb://127.0.0.1/users-api')
             
-        const app = express()
-
         app.use(cors())
 
         const router = express.Router()
