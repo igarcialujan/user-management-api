@@ -2,43 +2,38 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const users = require('./routes/users.route')
-const bodyParser = require('body-parser')
-const connectDB = require('.db/connectDB')
+// const bodyParser = require('body-parser')
+const connectDB = require('./db/connectDB')
+const handleNotFound = require('./middleware/not-found-handler')
+const handleError = require('./middleware/error-handler')
 const cors = require('cors')
 const logger = require('./api/utils/logger')
-const { env: { PORT }, argv: [, , port = PORT || 8080] } = process
+
+const { env: { PORT, MONGO_URI }, argv: [, , port = PORT || 8080] } = process
 
 logger.info('starting server');
 
+app.use(express.json())
+app.use(cors())
+
+app.use('/api/v1/users', users)
+
+app.use(handleNotFound)
+app.use(handleError)
+
+app.get('/', (req, res) => {
+    res.json('Welcome to the User Management API')
+})
+
 (async () => {
     try {
-        await connectDB(process.env.MONGO_URI || 'mongodb://127.0.0.1/users-api')
+        await connectDB(MONGO_URI || 'mongodb://127.0.0.1/users-api')
             
-        app.use(cors())
+        // const jsonBodyParser = bodyParser.json()
 
-        const router = express.Router()
-
-        const jsonBodyParser = bodyParser.json()
-
-        app.get('/', (req, res) => {
-            res.json('Welcome to Users Registration API')
-        })
-
-        api.post('/users', jsonBodyParser, registerUser)
-
-        api.post('/users/auth', jsonBodyParser, authenticateUser)
-
-        api.get('/users', retrieveUser)
-
-        api.patch('/users', jsonBodyParser, modifyUser)
-
-        api.delete('/users', jsonBodyParser, unregisterUser)
-
-        api.all('*', (req, res) => {
-            res.status(404).json({ message: 'sorry, this endpoint is not available' })
-        })
-
-        app.use('/api', api)
+        // api.all('*', (req, res) => {
+        //     res.status(404).json({ message: 'Sorry, this endpoint is not available' })
+        // })
 
         app.listen(port, () => logger.info(`server up and listening on port ${port}...`))
 
