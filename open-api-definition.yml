@@ -1,0 +1,23 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: User Management API
+  description: An API to manage user registration and profile
+
+servers:
+  - url: http://localhost/api/v1
+
+# Basic authentication
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+security:
+  - BasicAuth: []
+
+paths:
+  /users:
+    get:
+      description: Returns the authenticated user
+      

@@ -8,4 +8,4 @@ function createErrorType(name) {
     }
 }
 
-module.exports = createErrorType
+export default createErrorType

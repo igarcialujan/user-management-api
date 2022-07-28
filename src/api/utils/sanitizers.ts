@@ -5,6 +5,4 @@ function sanitizeDocument(doc) {
     delete doc.__v
 }
 
-module.exports = {
-    sanitizeDocument
-}
+export default sanitizeDocument

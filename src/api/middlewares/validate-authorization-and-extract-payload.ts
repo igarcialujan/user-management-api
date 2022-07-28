@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken')
+import { verify } from 'jsonwebtoken'
 const { env: { SECRET } } = process
 
 function validateAuthorizationAndExtractPayload(authorization) {
@@ -6,9 +6,9 @@ function validateAuthorizationAndExtractPayload(authorization) {
     
     const [, token] = authorization.split(' ')
 
-    const payload = jwt.verify(token, SECRET)
+    const payload = verify(token, SECRET)
 
     return payload
 }
 
-module.exports = validateAuthorizationAndExtractPayload
+export default validateAuthorizationAndExtractPayload

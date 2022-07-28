@@ -1,6 +1,6 @@
-const { CredentialsError, ConflictError, FormatError, NotFoundError } = require('../errors')
-const { JsonWebTokenError, TokenExpiredError } = require('jsonwebtoken')
-const logger = require('../utils/logger')
+import { CredentialsError, ConflictError, FormatError, NotFoundError } from '../errors'
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+import { warn, error as _error } from '../utils/logger'
 
 const handleError = (error, req, res, next) => {
     let status = 500
@@ -15,11 +15,11 @@ const handleError = (error, req, res, next) => {
         status = 409
 
     if (status < 500)
-        logger.warn(error.message)
+        warn(error.message)
     else
-        logger.error(error.message)
+        _error(error.message)
 
     res.status(status).json({ error: error.message })
 }
 
-module.exports = handleError
+export default handleError

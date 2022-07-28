@@ -1,11 +1,11 @@
-const { ConflictError, CredentialsError, NotFoundError } = require('../errors')
-const User = require('../models/User')
-const bcrypt = require('bcryptjs')
-const { sanitizeDocument } = require( './helpers/sanitizers' )
+import { ConflictError, CredentialsError, NotFoundError } from '../errors'
+import User from '../models/User'
+import { hashSync, compareSync } from 'bcryptjs'
+import sanitizeDocument from '../utils/sanitizers'
 
-const createUser = async (name, username, email, password) => {
+export const createUser = async (name: string, username: string, email: string, password: string) => {
     try {
-        await User.create({ name, username, email, password: bcrypt.hashSync(password) })
+        await User.create({ name, username, email, password: hashSync(password) })
     } catch (error) {
         if (error.code === 11000)
             throw new ConflictError('user with this username or email already exists')
@@ -14,11 +14,11 @@ const createUser = async (name, username, email, password) => {
     }
 }
 
-const authenticateUser = async (username, password) => {
+export const authenticateUser = async (username: string, password: string) => {
     try {
         const user = await User.findOne({ username })
         
-        if (!user || !bcrypt.compareSync(password, user.password)) throw new CredentialsError('wrong credentials')
+        if (!user || !compareSync(password, user.password)) throw new CredentialsError('wrong credentials')
 
         sanitizeDocument(user)
         
@@ -28,7 +28,7 @@ const authenticateUser = async (username, password) => {
     }
 }
 
-const getUser = async (id) => {
+export const getUser = async (id: string) => {
     try {
         const user = await User.findById(id).lean()
         
@@ -44,7 +44,7 @@ const getUser = async (id) => {
     }
 }
 
-const updateUser = async (id, data) => {
+export const updateUser = async (id: string, data) => {
     try {
         const user = await User.findById(id)
         
@@ -52,7 +52,7 @@ const updateUser = async (id, data) => {
         
         let { password } = data 
     
-        if (password && !bcrypt.compareSync(password, user.password)) throw new CredentialsError('wrong password')
+        if (password && !compareSync(password, user.password)) throw new CredentialsError('wrong password')
 
         if (data.newName) {
             data.name = data.newName 
@@ -80,7 +80,7 @@ const updateUser = async (id, data) => {
 
         for (const key in data) {
             if (key === 'password')
-                user[key] = bcrypt.hashSync(data[key])
+                user[key] = hashSync(data[key])
             else
                 user[key] = data[key]        
         }
@@ -94,11 +94,11 @@ const updateUser = async (id, data) => {
     }
 }
 
-const deleteUser = async (id, password) => {
+export const deleteUser = async (id: string, password: string) => {
     try {
         const user = await User.findById(id)
         
-        if (!user || !bcrypt.compareSync(password, user.password)) 
+        if (!user || !compareSync(password, user.password)) 
             throw new CredentialsError('wrong credentials')
     
         await user.remove()      
@@ -107,13 +107,6 @@ const deleteUser = async (id, password) => {
     }
 }
 
-module.exports = {
-    createUser,
-    authenticateUser,
-    getUser,
-    updateUser,
-    deleteUser
-}
 
 
 
