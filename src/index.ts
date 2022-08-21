@@ -7,7 +7,7 @@ import connectDB from './db/connectDB'
 import handleNotFound from './middleware/not-found-handler'
 import handleError from './middleware/error-handler'
 import cors from 'cors'
-import logger from './api/utils/logger'
+import logger from './users/utils/logger'
 
 const { env: { PORT, MONGO_URI }, argv: [, , port = PORT || 8000] } = process
 
