@@ -5,7 +5,7 @@ import debug from 'debug';
 const log: debug.IDebugger = debug('app:permission-middleware');
 
 class PermissionMiddleware {
-    permissionFlagRequired(requiredPermissionFlag: PermissionFlag) {
+    verifyRequiredPermissionFlag(requiredPermissionFlag: PermissionFlag) {
         return (
             req: express.Request,
             res: express.Response,
@@ -27,7 +27,7 @@ class PermissionMiddleware {
         };
     }
 
-    async onlySameUserOrAdminCanDoThisAction(
+    async verifyIsSameUserOrAdmin(
         req: express.Request,
         res: express.Response,
         next: express.NextFunction

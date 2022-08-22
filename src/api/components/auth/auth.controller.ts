@@ -2,11 +2,12 @@ import express from 'express';
 import debug from 'debug';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { env } from '../../../config/globals'
 
 const log: debug.IDebugger = debug('app:auth-controller');
 
 // @ts-expect-error
-const jwtSecret: string = process.env.JWT_SECRET;
+const jwtSecret: string = env.JWT_SECRET;
 const tokenExpirationInSeconds = 36000;
 
 class AuthController {

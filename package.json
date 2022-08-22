@@ -4,28 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev src/index.ts",
     "start": "tsc && node --unhandled-rejections=strict ./dist/app.js",
     "debug": "export DEBUG=* && npm run start",
     "tsc": "tsc",
-    "lint": "eslint --ext .ts .",
     "watch": "nodemon .",
     "inspect": "node --inspect-brk .",
     "watch-inspect": "nodemon --inspect-brk .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r ts-node/register 'test/**/*.test.ts' --unhandled-rejections=strict",
+    "test-debug": "export DEBUG=* && npm test"
   },
   "keywords": [
-    "users",
-    "registration",
-    "authentication",
-    "management",
-    "api"
+    "REST",
+    "API",
+    "ExpressJS",
+    "NodeJS",
+    "TypeScript",
+    "User Management"
   ],
   "author": "Ismael García Luján",
   "license": "MIT",
   "devDependencies": {
     "@types/argon2": "^0.15.0",
-    "@types/bcryptjs": "^2.4.2",
     "@types/chai": "^4.3.1",
     "@types/cors": "^2.8.12",
     "@types/debug": "^4.1.7",
@@ -47,7 +46,6 @@
   },
   "dependencies": {
     "argon2": "^0.28.7",
-    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "debug": "^4.3.4",
     "dotenv": "^16.0.1",

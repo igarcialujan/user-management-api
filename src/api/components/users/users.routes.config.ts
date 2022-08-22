@@ -15,10 +15,10 @@ class UsersRoutes extends RoutesConfig {
 
     configureRoutes() {
         this.app
-            .route(`/users`)
+            .route('/users')
             .get(
-                jwtMiddleware.validJWTNeeded,
-                permissionMiddleware.permissionFlagRequired(
+                jwtMiddleware.validateJWT,
+                permissionMiddleware.verifyRequiredPermissionFlag(
                     PermissionFlag.ADMIN_PERMISSION
                 ),
                 UsersController.listUsers
@@ -33,19 +33,19 @@ class UsersRoutes extends RoutesConfig {
                 UsersController.createUser
             );
 
-        this.app.param(`userId`, UsersMiddleware.extractUserId);
+        this.app.param('userId', UsersMiddleware.extractUserId);
 
         this.app
-            .route(`/users/:userId`)
+            .route('/users/:userId')
             .all(
                 UsersMiddleware.validateUserExists,
-                jwtMiddleware.validJWTNeeded,
-                permissionMiddleware.onlySameUserOrAdminCanDoThisAction
+                jwtMiddleware.validateJWT,
+                permissionMiddleware.verifyIsSameUserOrAdmin
             )
             .get(UsersController.getUserById)
             .delete(UsersController.removeUser);
 
-        this.app.put(`/users/:userId`, [
+        this.app.put('/users/:userId', [
             body('email').isEmail(),
             body('password')
                 .isLength({ min: 5 })
@@ -58,7 +58,7 @@ class UsersRoutes extends RoutesConfig {
             UsersController.put,
         ]);
 
-        this.app.patch(`/users/:userId`, [
+        this.app.patch('/users/:userId', [
             body('email').isEmail().optional(),
             body('password')
                 .isLength({ min: 5 })
