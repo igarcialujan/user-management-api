@@ -2,7 +2,7 @@ import app from '../../src/app';
 import supertest from 'supertest';
 import { expect } from 'chai';
 import shortid from 'shortid';
-import mongoose from 'mongoose';
+import mongooseService from '../../src/api/components/common/services/mongoose.service';
 
 let userId = '';
 const userBody = {
@@ -16,7 +16,7 @@ const newFirstName = 'Wendy';
 const newFirstName2 = 'Mickey';
 const newLastName2 = 'Mouse';
 
-describe('/api/users and /api/auth', function () {
+describe('/api/users and /api/auth', () => {
     let request: supertest.SuperAgentTest;
 
     before(function () {
@@ -24,7 +24,7 @@ describe('/api/users and /api/auth', function () {
     });
 
     describe('POST /users', () => {
-        it('should add a new user', async function () {
+        it('should add a new user', async () => {
             const res = await request.post('/users').send(userBody);
     
             expect(res.status).to.equal(201);
@@ -37,7 +37,7 @@ describe('/api/users and /api/auth', function () {
     })
 
     describe('POST /auth', () => {
-        it('should authenticate an existing user with valid email and password', async function () {
+        it('should authenticate an existing user with valid email and password', async () => {
             const res = await request.post('/auth').send(userBody);
     
             expect(res.status).to.equal(201);
@@ -52,7 +52,7 @@ describe('/api/users and /api/auth', function () {
 
 
     describe('GET /users/:userId', () => {
-        it('should retrieve a user with an access token', async function () {
+        it('should retrieve a user with an access token', async () => {
             const res = await request
                 .get(`/users/${userId}`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -68,7 +68,7 @@ describe('/api/users and /api/auth', function () {
     })
 
     describe('GET /users', () => {
-        it('should not allow a user to get all users', async function () {
+        it('should not allow a user to get all users', async () => {
             const res = await request
                 .get(`/users`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -79,7 +79,7 @@ describe('/api/users and /api/auth', function () {
     });
 
     describe('PATCH /users/:userId', () => {
-        it('should not allow a partial update to user', async function () {
+        it('should not allow a partial update to user', async () => {
             const res = await request
                 .patch(`/users/${userId}`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -92,7 +92,7 @@ describe('/api/users and /api/auth', function () {
     });
 
     describe('PUT /users/:userId', () => {
-        it('should not allow to update user with an nonexistent ID', async function () {
+        it('should not allow to update user with an nonexistent ID', async () => {
             const res = await request
                 .put(`/users/id-doesnt-exist`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -107,7 +107,7 @@ describe('/api/users and /api/auth', function () {
             expect(res.status).to.equal(404);
         });
 
-        it('should not allow a user to change the permission flags', async function () {
+        it('should not allow a user to change the permission flags', async () => {
             const res = await request
                 .put(`/users/${userId}`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -127,7 +127,7 @@ describe('/api/users and /api/auth', function () {
             );
         });
 
-        it('should allow a PUT to /users/:userId/permissionFlags/2 for testing', async function () {
+        it('should allow a PUT to /users/:userId/permissionFlags/2 for testing', async () => {
             const res = await request
                 .put(`/users/${userId}/permissionFlags/2`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -137,8 +137,8 @@ describe('/api/users and /api/auth', function () {
         });
     });
 
-    describe('POST /auth/refresh-token', function () {
-        it('should authenticate a user with permission flags and valid refresh token', async function () {
+    describe('POST /auth/refresh-token', () => {
+        it('should authenticate a user with permission flags and valid refresh token', async () => {
             const res = await request
                 .post('/auth/refresh-token')
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -155,7 +155,7 @@ describe('/api/users and /api/auth', function () {
     })
 
     describe('PUT /users/:userId', () => {
-        it('should allow a user with permission flags to change first and last names', async function () {
+        it('should allow a user with permission flags to change first and last names', async () => {
             const res = await request
                 .put(`/users/${userId}`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -172,7 +172,7 @@ describe('/api/users and /api/auth', function () {
     })
 
     describe('GET /users/:userId', () => {
-        it('should retrieve user and should have a new full name', async function () {
+        it('should retrieve user and should have a new full name', async () => {
             const res = await request
                 .get(`/users/${userId}`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -190,7 +190,7 @@ describe('/api/users and /api/auth', function () {
     })
 
     describe('DELETE /users/:userId', () => {
-        it('should allow a user to delete his account with valid access token', async function () {
+        it('should allow a user to delete his account with valid access token', async () => {
             const res = await request
                 .delete(`/users/${userId}`)
                 .set({ Authorization: `Bearer ${accessToken}` })
@@ -200,9 +200,9 @@ describe('/api/users and /api/auth', function () {
         });
     })
 
-    after(function (done) {
-        app.close(() => {
-            mongoose.connection.close(done);
+    after(async () => {
+        await app.close(async () => {
+            await mongooseService.getMongoose().connection.close();
         });
     });
 });
