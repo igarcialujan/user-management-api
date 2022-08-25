@@ -21,9 +21,9 @@ class AuthRoutes extends RoutesConfig {
         ]);
 
         this.app.post(`/auth/refresh-token`, [
-            jwtMiddleware.validateJWT,
+            jwtMiddleware.verifyValidJWT,
             jwtMiddleware.verifyRefreshBodyField,
-            jwtMiddleware.validateRefresh,
+            jwtMiddleware.verifyValidRefresh,
             authController.createJWT,
         ]);
         
