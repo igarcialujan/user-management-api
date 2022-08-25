@@ -23,12 +23,6 @@ describe('/api/users and /api/auth', function () {
         request = supertest.agent(app);
     });
 
-    after(function (done) {
-        app.close(() => {
-            mongoose.connection.close(done);
-        });
-    });
-
     describe('POST /users', () => {
         it('should add a new user', async function () {
             const res = await request.post('/users').send(userBody);
@@ -205,4 +199,10 @@ describe('/api/users and /api/auth', function () {
             expect(res.status).to.equal(204);
         });
     })
+
+    after(function (done) {
+        app.close(() => {
+            mongoose.connection.close(done);
+        });
+    });
 });
